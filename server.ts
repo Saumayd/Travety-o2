@@ -3,8 +3,8 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
-import { requireAuth, AuthRequest } from './src/middleware/auth.ts';
+import { GoogleGenAI, type GenerateContentResponse } from '@google/genai';
+import { requireAuth, type AuthRequest } from './src/middleware/auth.ts';
 import {
   getLobbySnapshotFromSql,
   getOrCreateUser,
@@ -61,7 +61,7 @@ function extractGroundingSources(response: GenerateContentResponse): GroundingSo
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   app.use(express.json({ limit: '2mb' }));
 
