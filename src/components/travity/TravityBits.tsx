@@ -12,10 +12,13 @@ import { useT } from '../../lib/ui-prefs';
 
 export type TravisPose = 'wave' | 'think' | 'celebrate';
 
+const RAW_BASE = import.meta.env.BASE_URL || './';
+const ASSET_PREFIX = RAW_BASE.endsWith('/') ? RAW_BASE : `${RAW_BASE}/`;
+
 const POSE_SRC: Record<TravisPose, string> = {
-  wave: '/assets/aistudio/travis-wave_7e70df70.png',
-  think: '/assets/aistudio/travis-think_d6f2bb78.png',
-  celebrate: '/assets/aistudio/travis-celebrate_4503b27e.png',
+  wave: `${ASSET_PREFIX}assets/aistudio/travis-wave_7e70df70.png`,
+  think: `${ASSET_PREFIX}assets/aistudio/travis-think_d6f2bb78.png`,
+  celebrate: `${ASSET_PREFIX}assets/aistudio/travis-celebrate_4503b27e.png`,
 };
 
 export function TravisImg({ pose, className }: { pose: TravisPose; className?: string }) {
