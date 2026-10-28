@@ -1,0 +1,6 @@
+{
+  "summary":  "Updated implementation plan to integrate a dual-mode interactive map component into the Lobby & Map tab: (1) Live Google Maps view using @vis.gl/react-google-maps and AdvancedMarkerElement, and (2) Recharts/CSS Coordinate Radar view plotting the Central Hub, user's home location, squad members' homes, and Pink Saheli booths (in Safe Case mode).",
+  "updatedAt":  "2026-10-27T16:13:46.444686579Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}
