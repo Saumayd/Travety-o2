@@ -19,7 +19,7 @@ const POSE_SRC: Record<TravisPose, string> = {
 };
 
 export function TravisImg({ pose, className }: { pose: TravisPose; className?: string }) {
-  return <img src={POSE_SRC[pose]} alt="Travis, the Travity guide" className={className} />;
+  return <img src={POSE_SRC[pose]} alt="Travis, the Travety guide" className={className} />;
 }
 
 export function DemoBadge({ className }: { className?: string }) {
@@ -31,8 +31,8 @@ export function DemoBadge({ className }: { className?: string }) {
         (className ?? '')
       }
     >
-      <Sparkles className="h-3.5 w-3.5" aria-hidden />
-      {t('common.demo')}
+      <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden />
+      <span className="truncate">{t('common.demo')}</span>
     </span>
   );
 }
@@ -47,12 +47,12 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 className="text-2xl font-bold sm:text-3xl">{title}</h1>
-        {sub && <p className="mt-1 max-w-xl text-sm text-muted-foreground">{sub}</p>}
+    <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div className="min-w-0">
+        <h1 className="text-xl font-bold leading-tight sm:text-3xl">{title}</h1>
+        {sub && <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground sm:text-sm">{sub}</p>}
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      {actions && <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">{actions}</div>}
     </div>
   );
 }

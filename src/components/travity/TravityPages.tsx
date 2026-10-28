@@ -201,7 +201,7 @@ export function DashboardPage({
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') onNavigate('plan');
         }}
-        className="group relative mb-5 block cursor-pointer overflow-hidden rounded-3xl border border-primary/30 bg-card p-6 shadow-lift transition-all hover:-translate-y-1 active:translate-y-0 active:scale-[0.995] sm:p-8"
+        className="group relative mb-5 block cursor-pointer overflow-hidden rounded-3xl border border-primary/30 bg-card p-5 shadow-lift transition-all hover:-translate-y-1 active:translate-y-0 active:scale-[0.995] sm:p-8"
       >
         <div
           className="pointer-events-none absolute inset-0 grad-primary opacity-[0.12]"
@@ -215,17 +215,19 @@ export function DashboardPage({
           className="pointer-events-none absolute -bottom-20 left-10 h-40 w-40 rounded-full bg-brand-pink/15 blur-2xl"
           aria-hidden
         />
-        <div className="relative flex items-center gap-4 sm:gap-6">
+        <div className="relative flex flex-col items-start gap-4 min-[420px]:flex-row min-[420px]:items-center sm:gap-6">
           <TravisImg
             pose="celebrate"
-            className="h-20 w-20 shrink-0 anim-float drop-shadow-lg sm:h-28 sm:w-28"
+            className="h-16 w-16 shrink-0 anim-float drop-shadow-lg min-[420px]:h-20 min-[420px]:w-20 sm:h-28 sm:w-28"
           />
           <div className="min-w-0 flex-1">
-            <h2 className="font-display text-2xl font-bold leading-tight sm:text-3xl">
+            <h2 className="font-display text-xl font-bold leading-tight sm:text-3xl">
               <span className="text-grad">{dt('planTitle')}</span>
             </h2>
-            <p className="mt-1.5 max-w-md text-sm text-muted-foreground">{dt('planSub')}</p>
-            <span className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft transition-colors group-hover:bg-primary/90">
+            <p className="mt-1.5 max-w-md text-xs leading-relaxed text-muted-foreground sm:text-sm">
+              {dt('planSub')}
+            </p>
+            <span className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-soft transition-colors group-hover:bg-primary/90 sm:mt-4 sm:text-sm">
               {dt('planCta')}
               <ArrowRight
                 className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
@@ -237,7 +239,7 @@ export function DashboardPage({
       </div>
 
       {/* Secondary Cards — 2 × 2 */}
-      <section className="grid grid-cols-1 gap-3 min-[340px]:grid-cols-2 sm:gap-4">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4">
         <SmallCard
           onClick={() => onNavigate('join')}
           icon={Users}
@@ -276,6 +278,42 @@ export function DashboardPage({
           {dt('recentCount', { n: past.length })}
           {past.at(-1) ? ` · ${destBySlug(past.at(-1)!.dest)?.name ?? ''}` : ''}
         </SmallCard>
+      </section>
+
+      {/* Quick Tools Strip for Smartphones & Desktop */}
+      <section className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        <button
+          type="button"
+          onClick={() => onNavigate('recommendations')}
+          className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3.5 py-3 text-left text-xs font-semibold transition-colors hover:bg-accent"
+        >
+          <Scale className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+          <span className="truncate">{t('nav.recommendations')}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('explore')}
+          className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3.5 py-3 text-left text-xs font-semibold transition-colors hover:bg-accent"
+        >
+          <Search className="h-4 w-4 shrink-0 text-brand-cyan" aria-hidden />
+          <span className="truncate">{t('nav.explore')}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('safety')}
+          className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3.5 py-3 text-left text-xs font-semibold transition-colors hover:bg-accent"
+        >
+          <ShieldCheck className="h-4 w-4 shrink-0 text-success" aria-hidden />
+          <span className="truncate">{t('safety.title')}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('expenses')}
+          className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3.5 py-3 text-left text-xs font-semibold transition-colors hover:bg-accent"
+        >
+          <IndianRupee className="h-4 w-4 shrink-0 text-brand-pink" aria-hidden />
+          <span className="truncate">{t('nav.expenses')}</span>
+        </button>
       </section>
     </div>
   );
@@ -894,26 +932,30 @@ export function GroupLobbyPage({
                 return (
                   <li
                     key={id}
-                    className="flex items-center gap-3 rounded-xl border border-border bg-background p-3"
+                    className="flex flex-wrap items-center justify-between gap-2.5 rounded-xl border border-border bg-background p-3"
                   >
-                    <FriendAvatar member={m} size={36} />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold">
-                        {m.name}
-                        {id === activeMemberId ? ' (you)' : ''}
-                      </p>
-                      <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
-                        <MapPin className="h-3 w-3" aria-hidden />
-                        {set ? stationName(set) : m.homeLabel} · Curfew {m.curfew}
-                      </p>
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <FriendAvatar member={m} size={36} />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold">
+                          {m.name}
+                          {id === activeMemberId ? ' (you)' : ''}
+                        </p>
+                        <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
+                          <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                          <span className="truncate">
+                            {set ? stationName(set) : m.homeLabel} · Curfew {m.curfew}
+                          </span>
+                        </p>
+                      </div>
                     </div>
                     {set ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-success">
+                      <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-success">
                         <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
                         {t('lobby.joined')}
                       </span>
                     ) : (
-                      <>
+                      <div className="flex items-center gap-2">
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-warning">
                           <Clock className="h-3.5 w-3.5" aria-hidden />
                           {t('lobby.pending')}
@@ -925,7 +967,7 @@ export function GroupLobbyPage({
                         >
                           Confirm station
                         </button>
-                      </>
+                      </div>
                     )}
                   </li>
                 );
@@ -1854,36 +1896,36 @@ export function RouteMapPage({
         title={t('map.title')}
         sub="Compare every friend's metro path across Delhi NCR — switch between the Stylised Squad Map, Interactive DMRC Network, and Live Google Maps."
         actions={
-          <div className="inline-flex rounded-xl border border-border bg-card p-1">
+          <div className="grid w-full grid-cols-3 rounded-xl border border-border bg-card p-1 sm:inline-flex sm:w-auto">
             <button
               type="button"
               onClick={() => setMapTab('stylised')}
               className={
-                'rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ' +
+                'rounded-lg px-2 py-1.5 text-center text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs ' +
                 (mapTab === 'stylised'
                   ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground')
               }
             >
-              Squad Route Map
+              Squad Map
             </button>
             <button
               type="button"
               onClick={() => setMapTab('dmrc')}
               className={
-                'rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ' +
+                'rounded-lg px-2 py-1.5 text-center text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs ' +
                 (mapTab === 'dmrc'
                   ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground')
               }
             >
-              DMRC Transit Map
+              DMRC Map
             </button>
             <button
               type="button"
               onClick={() => setMapTab('google')}
               className={
-                'rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ' +
+                'rounded-lg px-2 py-1.5 text-center text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs ' +
                 (mapTab === 'google'
                   ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground')

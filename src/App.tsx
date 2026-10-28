@@ -33,6 +33,7 @@ import {
   User as UserIcon,
   Users,
   Wallet,
+  X,
   type LucideIcon,
 } from 'lucide-react';
 import {
@@ -117,7 +118,7 @@ const DEFAULT_CHAT_MESSAGES: ChatMessageItem[] = [
   {
     id: 'msg-welcome',
     role: 'model',
-    text: 'Hi! I am Travis, your Travity Gemini Assistant for the NSUT & IGDTUW squad (Devika, Vansh, Saumay, Rimisha, and Pragya).\n\n• Ask me to plan curfew-safe DMRC Blue & Yellow Line routes between NSUT (Dwarka Mor) and IGDTUW (Kashmere Gate)\n• Toggle Google Search Grounding ON for live Delhi weather, DMRC metro updates, and student cafes with verified web citations\n• Switch between Fast (3.1 Flash-Lite) and General (3.8 Flash) reasoning modes.',
+    text: 'Hi! I am Travis, your Travety Gemini Assistant for the NSUT & IGDTUW squad (Devika, Vansh, Saumay, Rimisha, and Pragya).\n\n• Ask me to plan curfew-safe DMRC Blue & Yellow Line routes between NSUT (Dwarka Mor) and IGDTUW (Kashmere Gate)\n• Toggle Google Search Grounding ON for live Delhi weather, DMRC metro updates, and student cafes with verified web citations\n• Switch between Fast (3.1 Flash-Lite) and General (3.8 Flash) reasoning modes.',
     modelUsed: 'gemini-3.8-flash',
     timestamp: 'Ready',
   },
@@ -208,6 +209,7 @@ function TravityShell() {
   const [authReady, setAuthReady] = useState<boolean>(false);
   const [isSosOpen, setIsSosOpen] = useState<boolean>(false);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<ChatMessageItem[]>(() =>
     loadStored<ChatMessageItem[]>('travety_chat_v2', DEFAULT_CHAT_MESSAGES)
   );
@@ -288,6 +290,7 @@ function TravityShell() {
   const navigateTo = (nextPage: TravityPageId) => {
     setPageHistory((prev) => [...prev.slice(-12), currentPage]);
     setCurrentPage(nextPage);
+    setIsMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -854,7 +857,7 @@ function TravityShell() {
         </div>
       )}
 
-      {/* Desktop Sidebar (from _app_4df76d21.tsx) */}
+      {/* Desktop Sidebar */}
       <aside className="sticky top-0 hidden h-screen flex-col border-r border-sidebar-border bg-sidebar px-4 py-5 lg:flex">
         <button
           type="button"
@@ -862,7 +865,7 @@ function TravityShell() {
           className="flex items-center gap-2.5 text-left"
         >
           <TravisImg pose="wave" className="h-9 w-9 anim-float" />
-          <span className="font-display text-xl font-bold tracking-tight">Travity</span>
+          <span className="font-display text-xl font-bold tracking-tight">Travety</span>
         </button>
         <p className="mt-1 px-1 text-xs text-muted-foreground">{t('brand.tagline')}</p>
 
@@ -933,6 +936,107 @@ function TravityShell() {
         </div>
       </aside>
 
+      {/* Smartphone Slide-Over Navigation Drawer */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 flex lg:hidden" role="dialog" aria-modal="true">
+          <div
+            className="fixed inset-0 bg-foreground/40 backdrop-blur-xs"
+            aria-hidden
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <aside className="relative z-10 flex h-full w-[min(18.5rem,86vw)] flex-col border-r border-sidebar-border bg-sidebar px-4 py-4 shadow-lift">
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => navigateTo('dashboard')}
+                className="flex items-center gap-2.5 text-left"
+              >
+                <TravisImg pose="wave" className="h-8 w-8 anim-float" />
+                <span className="font-display text-xl font-bold tracking-tight">Travety</span>
+              </button>
+              <button
+                type="button"
+                aria-label="Close navigation menu"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
+              >
+                <X className="h-5 w-5" aria-hidden />
+              </button>
+            </div>
+            <p className="mt-1 px-1 text-xs text-muted-foreground">{t('brand.tagline')}</p>
+
+            <nav aria-label="Mobile Main" className="mt-4 flex-1 space-y-4 overflow-y-auto pr-1">
+              {NAV_GROUPS.map((group, gi) => (
+                <div key={gi} className="space-y-1">
+                  {group.map((item) => {
+                    const active = currentPage === item.id;
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => navigateTo(item.id)}
+                        aria-current={active ? 'page' : undefined}
+                        className={
+                          'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors ' +
+                          (active
+                            ? 'bg-primary/10 text-primary font-semibold'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground')
+                        }
+                      >
+                        <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                        {t(item.labelKey)}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </nav>
+
+            <div className="mt-3 space-y-2.5 border-t border-sidebar-border pt-3">
+              <div className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2">
+                <FriendAvatar member={memberById(activeMemberId)} size={32} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">
+                    {memberById(activeMemberId).name}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {memberById(activeMemberId).homeLabel}
+                  </p>
+                </div>
+              </div>
+              {user ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    logOutUser();
+                  }}
+                  className="text-xs font-medium text-muted-foreground underline-offset-2 hover:underline"
+                >
+                  Sign out
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsMobileMenuOpen(false);
+                    try {
+                      await signInWithGoogle();
+                    } catch {
+                      // ignore
+                    }
+                  }}
+                  className="text-xs font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  Sign in with Google
+                </button>
+              )}
+            </div>
+          </aside>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <div className="min-w-0 flex flex-col min-h-screen">
         <TravityHeader
@@ -950,10 +1054,11 @@ function TravityShell() {
           }
           onOpenGeminiChat={() => setIsChatOpen(true)}
           onOpenSos={() => setIsSosOpen(true)}
+          onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
         />
 
-        <main className="mx-auto w-full max-w-[1200px] flex-1 px-4 pb-24 pt-6 sm:px-6 lg:pb-10 lg:pt-8">
-          <DemoBadge className="mb-4 lg:hidden" />
+        <main className="mx-auto w-full max-w-[1200px] flex-1 px-3.5 pb-28 pt-4 sm:px-6 sm:pt-6 lg:pb-10 lg:pt-8">
+          <DemoBadge className="mb-3.5 lg:hidden" />
 
           {bannerMessage && (
             <div className="mb-5 flex items-center justify-between rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-soft">

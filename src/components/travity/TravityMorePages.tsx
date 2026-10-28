@@ -17,6 +17,7 @@ import {
   LogIn,
   LogOut,
   MapPin,
+  Menu,
   MessageSquareHeart,
   Moon,
   MoreVertical,
@@ -78,6 +79,7 @@ export function TravityHeader({
   onMarkAllRead,
   onOpenGeminiChat,
   onOpenSos,
+  onOpenMobileMenu,
 }: {
   canGoBack: boolean;
   onBack: () => void;
@@ -87,6 +89,7 @@ export function TravityHeader({
   onMarkAllRead: () => void;
   onOpenGeminiChat: () => void;
   onOpenSos: () => void;
+  onOpenMobileMenu?: () => void;
 }) {
   const { theme, toggleTheme } = useTheme();
   const { lang, setLang, dt } = useT();
@@ -96,7 +99,29 @@ export function TravityHeader({
   const unread = notifications.filter((n) => n.unread).length;
 
   return (
-    <header className="sticky top-0 z-30 flex items-center gap-1.5 border-b border-border bg-background/90 px-2 py-2 backdrop-blur sm:px-4">
+    <header className="sticky top-0 z-30 flex items-center gap-1 border-b border-border bg-background/95 px-2.5 py-2 backdrop-blur sm:gap-2 sm:px-5">
+      {(settingsOpen || notifsOpen) && (
+        <div
+          className="fixed inset-0 z-40"
+          aria-hidden
+          onClick={() => {
+            setSettingsOpen(false);
+            setNotifsOpen(false);
+          }}
+        />
+      )}
+
+      {onOpenMobileMenu && (
+        <button
+          type="button"
+          aria-label="Open navigation menu"
+          className={iconBtn + ' lg:hidden'}
+          onClick={onOpenMobileMenu}
+        >
+          <Menu className="h-5 w-5" aria-hidden />
+        </button>
+      )}
+
       {canGoBack && (
         <button
           type="button"
@@ -111,20 +136,22 @@ export function TravityHeader({
       <button
         type="button"
         onClick={() => onNavigate('dashboard')}
-        className="ml-1 flex min-w-0 items-center gap-2.5 text-left"
+        className="flex min-w-0 items-center gap-2 text-left lg:hidden"
       >
-        <TravisImg pose="wave" className="h-9 w-9 anim-float" />
-        <span className="font-display text-xl font-bold tracking-tight">Travity</span>
+        <TravisImg pose="wave" className="h-8 w-8 shrink-0 anim-float sm:h-9 sm:w-9" />
+        <span className="truncate font-display text-lg font-bold tracking-tight sm:text-xl">
+          Travety
+        </span>
       </button>
 
-      <div className="ml-auto flex items-center gap-1.5">
+      <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
         {/* Gemini Assistant Button */}
         <button
           type="button"
           onClick={onOpenGeminiChat}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/20"
+          className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-2.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/20 sm:px-3"
         >
-          <Sparkles className="h-3.5 w-3.5" aria-hidden />
+          <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden />
           <span className="hidden sm:inline">Ask Travis AI</span>
           <span className="sm:hidden">AI</span>
         </button>
@@ -133,14 +160,14 @@ export function TravityHeader({
         <button
           type="button"
           onClick={onOpenSos}
-          className="inline-flex items-center gap-1 rounded-xl bg-destructive px-3 py-1.5 text-xs font-bold text-destructive-foreground transition-opacity hover:opacity-90"
+          className="inline-flex h-9 items-center gap-1 rounded-xl bg-destructive px-2.5 text-xs font-bold text-destructive-foreground transition-opacity hover:opacity-90 sm:px-3"
         >
-          <ShieldAlert className="h-3.5 w-3.5" aria-hidden />
+          <ShieldAlert className="h-3.5 w-3.5 shrink-0" aria-hidden />
           <span>SOS</span>
         </button>
 
         {/* Settings Menu Dropdown */}
-        <div className="relative">
+        <div className="relative z-50">
           <button
             type="button"
             aria-label={dt('menu')}
@@ -164,7 +191,7 @@ export function TravityHeader({
                   if (theme !== 'light') toggleTheme();
                   setSettingsOpen(false);
                 }}
-                className="flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-sm hover:bg-accent"
+                className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm hover:bg-accent"
               >
                 <span className="flex items-center gap-2">
                   <Sun className="h-4 w-4" />
@@ -178,7 +205,7 @@ export function TravityHeader({
                   if (theme !== 'dark') toggleTheme();
                   setSettingsOpen(false);
                 }}
-                className="flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-sm hover:bg-accent"
+                className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm hover:bg-accent"
               >
                 <span className="flex items-center gap-2">
                   <Moon className="h-4 w-4" />
@@ -200,7 +227,7 @@ export function TravityHeader({
                     setLang(l);
                     setSettingsOpen(false);
                   }}
-                  className="flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-sm hover:bg-accent"
+                  className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm hover:bg-accent"
                 >
                   <span>{l === 'en' ? 'English' : 'हिंदी'}</span>
                   {lang === l && <Check className="h-4 w-4 text-primary" />}
@@ -211,7 +238,7 @@ export function TravityHeader({
         </div>
 
         {/* Notification Bell Popover */}
-        <div className="relative">
+        <div className="relative z-50">
           <button
             type="button"
             aria-label={`${dt('notifs')}${unread ? ` (${unread})` : ''}`}
@@ -230,7 +257,7 @@ export function TravityHeader({
           </button>
 
           {notifsOpen && (
-            <div className="absolute right-0 top-11 z-50 w-[min(22rem,calc(100vw-1rem))] overflow-hidden rounded-2xl border border-border bg-popover text-popover-foreground shadow-lift">
+            <div className="fixed inset-x-3 top-14 z-50 overflow-hidden rounded-2xl border border-border bg-popover text-popover-foreground shadow-lift sm:absolute sm:inset-x-auto sm:right-0 sm:top-11 sm:w-88">
               <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
                 <p className="font-semibold">{dt('notifs')}</p>
                 {unread > 0 && (
@@ -1280,7 +1307,7 @@ export function ProfilePage({
     <div>
       <PageHeader
         title={t('nav.profile')}
-        sub="Who you are on Travity, and how the app behaves for your commute."
+        sub="Who you are on Travety, and how the app behaves for your commute."
       />
 
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
@@ -1407,8 +1434,8 @@ export function ProfilePage({
 
 const FAQS = [
   {
-    q: 'How does Travity pick a place everyone can reach?',
-    a: "Each friend sets a starting metro station (like Dwarka Mor for NSUT or Kashmere Gate for IGDTUW). Travity estimates every person's commute to candidate destinations and surfaces options that balance travel time, curfew return, and budget.",
+    q: 'How does Travety pick a place everyone can reach?',
+    a: "Each friend sets a starting metro station (like Dwarka Mor for NSUT or Kashmere Gate for IGDTUW). Travety estimates every person's commute to candidate destinations and surfaces options that balance travel time, curfew return, and budget.",
   },
   {
     q: 'How do invite codes work?',
@@ -1416,7 +1443,7 @@ const FAQS = [
   },
   {
     q: 'How are expenses split?',
-    a: 'Log what was paid and who took part. Travity keeps a running sheet and shows who gets back and who owes — settling happens directly between friends.',
+    a: 'Log what was paid and who took part. Travety keeps a running sheet and shows who gets back and who owes — settling happens directly between friends.',
   },
 ];
 
@@ -1439,7 +1466,7 @@ export function HelpPage({ onNavigate }: { onNavigate: (page: TravityPageId) => 
     <div>
       <PageHeader
         title={t('nav.help')}
-        sub="Short answers on how Travity works, plus how your squad's safety comes first."
+        sub="Short answers on how Travety works, plus how your squad's safety comes first."
       />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
