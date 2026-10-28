@@ -85,7 +85,15 @@ export function memberById(id: string): Member {
   );
 }
 
-export type MetroLineName = 'Blue' | 'Yellow' | 'Red' | 'Pink' | 'Magenta' | 'Violet';
+export type MetroLineName =
+  | 'Blue'
+  | 'Yellow'
+  | 'Red'
+  | 'Pink'
+  | 'Magenta'
+  | 'Violet'
+  | 'Orange'
+  | 'Green';
 
 export const LINE_COLORS: Record<MetroLineName, string> = {
   Blue: '#2563EB',
@@ -94,33 +102,102 @@ export const LINE_COLORS: Record<MetroLineName, string> = {
   Pink: '#EC4899',
   Magenta: '#9333EA',
   Violet: '#7C3AED',
+  Orange: '#F97316',
+  Green: '#10B981',
 };
 
 export interface StationPoint {
   id: string;
   name: string;
+  shortName?: string;
   x: number;
   y: number;
+  lat: number;
+  lng: number;
   lines: MetroLineName[];
+  isInterchange?: boolean;
+  showLabel?: boolean;
 }
 
 export const STATIONS: StationPoint[] = [
-  { id: 'dwarka-sec-21', name: 'Dwarka Sec 21 (NSUT South)', x: 110, y: 630, lines: ['Blue'] },
-  { id: 'dwarka-mor', name: 'Dwarka Mor (NSUT Hub)', x: 185, y: 555, lines: ['Blue'] },
-  { id: 'janakpuri-west', name: 'Janakpuri West', x: 265, y: 495, lines: ['Blue', 'Magenta'] },
-  { id: 'rajouri-garden', name: 'Rajouri Garden', x: 345, y: 430, lines: ['Blue', 'Pink'] },
-  { id: 'karol-bagh', name: 'Karol Bagh', x: 435, y: 395, lines: ['Blue'] },
-  { id: 'rajiv-chowk', name: 'Rajiv Chowk (CP)', x: 525, y: 395, lines: ['Blue', 'Yellow'] },
-  { id: 'mandi-house', name: 'Mandi House', x: 605, y: 410, lines: ['Blue', 'Violet'] },
-  { id: 'samaypur-badli', name: 'Vishwavidyalaya (North Campus)', x: 510, y: 155, lines: ['Yellow'] },
-  { id: 'civil-lines', name: 'Civil Lines', x: 520, y: 215, lines: ['Yellow'] },
-  { id: 'kashmere-gate', name: 'Kashmere Gate (IGDTUW Hub)', x: 535, y: 265, lines: ['Yellow', 'Red', 'Violet'] },
-  { id: 'chandni-chowk', name: 'Chandni Chowk', x: 530, y: 325, lines: ['Yellow'] },
-  { id: 'central-secretariat', name: 'Central Secretariat', x: 525, y: 470, lines: ['Yellow', 'Violet'] },
-  { id: 'ina', name: 'Dilli Haat - INA', x: 520, y: 560, lines: ['Yellow', 'Pink'] },
-  { id: 'hauz-khas', name: 'Hauz Khas', x: 515, y: 650, lines: ['Yellow', 'Magenta'] },
-  { id: 'netaji-subhash-place', name: 'Netaji Subhash Place (NSP)', x: 370, y: 245, lines: ['Red', 'Pink'] },
-  { id: 'jln-stadium', name: 'JLN Stadium (Sunder Nursery)', x: 625, y: 525, lines: ['Violet'] },
+  // Blue Line (Dwarka Sec 21 -> Central Delhi -> Noida Electronic City & Vaishali Branch)
+  { id: 'dwarka-sec-21', name: 'Dwarka Sec 21 (NSUT South)', shortName: 'Dwarka Sec 21', x: 95, y: 650, lat: 28.5522, lng: 77.0583, lines: ['Blue', 'Orange'], isInterchange: true, showLabel: true },
+  { id: 'dwarka', name: 'Dwarka', shortName: 'Dwarka', x: 135, y: 605, lat: 28.6143, lng: 77.0221, lines: ['Blue'] },
+  { id: 'dwarka-mor', name: 'Dwarka Mor (NSUT Hub)', shortName: 'Dwarka Mor (NSUT)', x: 185, y: 555, lat: 28.6193, lng: 77.0332, lines: ['Blue'], showLabel: true },
+  { id: 'nawada', name: 'Nawada', shortName: 'Nawada', x: 222, y: 525, lat: 28.6203, lng: 77.0451, lines: ['Blue'] },
+  { id: 'uttam-nagar-west', name: 'Uttam Nagar West', shortName: 'Uttam Nagar', x: 245, y: 508, lat: 28.6218, lng: 77.0566, lines: ['Blue'] },
+  { id: 'janakpuri-west', name: 'Janakpuri West', shortName: 'Janakpuri West', x: 270, y: 490, lat: 28.6294, lng: 77.0776, lines: ['Blue', 'Magenta'], isInterchange: true, showLabel: true },
+  { id: 'tilak-nagar', name: 'Tilak Nagar', shortName: 'Tilak Nagar', x: 308, y: 460, lat: 28.6366, lng: 77.0965, lines: ['Blue'] },
+  { id: 'rajouri-garden', name: 'Rajouri Garden', shortName: 'Rajouri Garden', x: 345, y: 430, lat: 28.649, lng: 77.1225, lines: ['Blue', 'Pink'], isInterchange: true, showLabel: true },
+  { id: 'kirti-nagar', name: 'Kirti Nagar', shortName: 'Kirti Nagar', x: 390, y: 410, lat: 28.6558, lng: 77.1506, lines: ['Blue', 'Green'], isInterchange: true },
+  { id: 'karol-bagh', name: 'Karol Bagh', shortName: 'Karol Bagh', x: 445, y: 395, lat: 28.644, lng: 77.1887, lines: ['Blue'], showLabel: true },
+  { id: 'rajiv-chowk', name: 'Rajiv Chowk (Connaught Place)', shortName: 'Rajiv Chowk (CP)', x: 525, y: 395, lat: 28.6328, lng: 77.2197, lines: ['Blue', 'Yellow'], isInterchange: true, showLabel: true },
+  { id: 'mandi-house', name: 'Mandi House', shortName: 'Mandi House', x: 605, y: 405, lat: 28.6258, lng: 77.2342, lines: ['Blue', 'Violet'], isInterchange: true, showLabel: true },
+  { id: 'yamuna-bank', name: 'Yamuna Bank', shortName: 'Yamuna Bank', x: 675, y: 420, lat: 28.6233, lng: 77.2679, lines: ['Blue'], isInterchange: true },
+  { id: 'mayur-vihar-1', name: 'Mayur Vihar-I', shortName: 'Mayur Vihar-I', x: 725, y: 465, lat: 28.6047, lng: 77.2893, lines: ['Blue', 'Pink'], isInterchange: true },
+  { id: 'noida-sec-18', name: 'Noida Sector 18', shortName: 'Noida Sec 18', x: 785, y: 525, lat: 28.5708, lng: 77.3261, lines: ['Blue'], showLabel: true },
+  { id: 'botanical-garden', name: 'Botanical Garden (Noida)', shortName: 'Botanical Garden', x: 830, y: 575, lat: 28.564, lng: 77.3343, lines: ['Blue', 'Magenta'], isInterchange: true, showLabel: true },
+  { id: 'noida-electronic-city', name: 'Noida Electronic City', shortName: 'Noida Elec City', x: 910, y: 560, lat: 28.6209, lng: 77.3752, lines: ['Blue'], showLabel: true },
+  // Blue Line Vaishali Branch
+  { id: 'karkardooma', name: 'Karkardooma', shortName: 'Karkardooma', x: 760, y: 365, lat: 28.6485, lng: 77.3057, lines: ['Blue', 'Pink'], isInterchange: true },
+  { id: 'anand-vihar', name: 'Anand Vihar ISBT', shortName: 'Anand Vihar', x: 815, y: 355, lat: 28.6469, lng: 77.316, lines: ['Blue', 'Pink'], isInterchange: true, showLabel: true },
+  { id: 'vaishali', name: 'Vaishali (Ghaziabad)', shortName: 'Vaishali', x: 885, y: 340, lat: 28.6499, lng: 77.3397, lines: ['Blue'], showLabel: true },
+
+  // Yellow Line (Samaypur Badli -> North Campus -> Kashmere Gate -> CP -> Hauz Khas -> Gurugram)
+  { id: 'samaypur-badli', name: 'Samaypur Badli', shortName: 'Samaypur Badli', x: 465, y: 75, lat: 28.7445, lng: 77.1383, lines: ['Yellow'], showLabel: true },
+  { id: 'azadpur', name: 'Azadpur', shortName: 'Azadpur', x: 485, y: 135, lat: 28.7069, lng: 77.1792, lines: ['Yellow', 'Pink'], isInterchange: true, showLabel: true },
+  { id: 'vishwavidyalaya', name: 'Vishwavidyalaya (North Campus)', shortName: 'Vishwavidyalaya', x: 510, y: 175, lat: 28.6955, lng: 77.2148, lines: ['Yellow'], showLabel: true },
+  { id: 'civil-lines', name: 'Civil Lines', shortName: 'Civil Lines', x: 522, y: 220, lat: 28.6769, lng: 77.225, lines: ['Yellow'], showLabel: true },
+  { id: 'kashmere-gate', name: 'Kashmere Gate (IGDTUW Hub)', shortName: 'Kashmere Gate (IGDTUW)', x: 535, y: 265, lat: 28.6675, lng: 77.2282, lines: ['Yellow', 'Red', 'Violet'], isInterchange: true, showLabel: true },
+  { id: 'chandni-chowk', name: 'Chandni Chowk', shortName: 'Chandni Chowk', x: 530, y: 315, lat: 28.6579, lng: 77.2301, lines: ['Yellow'] },
+  { id: 'new-delhi', name: 'New Delhi (Airport Express Hub)', shortName: 'New Delhi', x: 527, y: 355, lat: 28.6425, lng: 77.2217, lines: ['Yellow', 'Orange'], isInterchange: true },
+  { id: 'central-secretariat', name: 'Central Secretariat', shortName: 'Central Sec', x: 525, y: 465, lat: 28.6147, lng: 77.2119, lines: ['Yellow', 'Violet'], isInterchange: true, showLabel: true },
+  { id: 'ina', name: 'Dilli Haat - INA', shortName: 'Dilli Haat - INA', x: 520, y: 555, lat: 28.5746, lng: 77.2096, lines: ['Yellow', 'Pink'], isInterchange: true, showLabel: true },
+  { id: 'aiims', name: 'AIIMS', shortName: 'AIIMS', x: 518, y: 598, lat: 28.5689, lng: 77.2076, lines: ['Yellow'] },
+  { id: 'hauz-khas', name: 'Hauz Khas', shortName: 'Hauz Khas', x: 515, y: 650, lat: 28.5432, lng: 77.2067, lines: ['Yellow', 'Magenta'], isInterchange: true, showLabel: true },
+  { id: 'saket', name: 'Saket', shortName: 'Saket', x: 495, y: 710, lat: 28.5206, lng: 77.2016, lines: ['Yellow'] },
+  { id: 'qutab-minar', name: 'Qutab Minar', shortName: 'Qutab Minar', x: 465, y: 755, lat: 28.5129, lng: 77.1864, lines: ['Yellow'], showLabel: true },
+  { id: 'sikanderpur', name: 'Sikanderpur (CyberHub)', shortName: 'Sikanderpur', x: 395, y: 815, lat: 28.4818, lng: 77.0924, lines: ['Yellow'] },
+  { id: 'millennium-city-centre', name: 'Millennium City Centre Gurugram', shortName: 'Gurugram Hub', x: 335, y: 860, lat: 28.4593, lng: 77.0724, lines: ['Yellow'], showLabel: true },
+
+  // Red Line (Rithala -> NSP -> Inderlok -> Kashmere Gate -> Welcome -> Shaheed Sthal)
+  { id: 'rithala', name: 'Rithala (Rohini)', shortName: 'Rithala', x: 215, y: 155, lat: 28.7208, lng: 77.1071, lines: ['Red'], showLabel: true },
+  { id: 'pitampura', name: 'Pitampura', shortName: 'Pitampura', x: 290, y: 195, lat: 28.7032, lng: 77.1323, lines: ['Red'] },
+  { id: 'netaji-subhash-place', name: 'Netaji Subhash Place (NSP)', shortName: 'NSP', x: 355, y: 230, lat: 28.696, lng: 77.1524, lines: ['Red', 'Pink'], isInterchange: true, showLabel: true },
+  { id: 'inderlok', name: 'Inderlok', shortName: 'Inderlok', x: 410, y: 255, lat: 28.6733, lng: 77.1704, lines: ['Red', 'Green'], isInterchange: true, showLabel: true },
+  { id: 'tis-hazari', name: 'Tis Hazari', shortName: 'Tis Hazari', x: 475, y: 262, lat: 28.667, lng: 77.2165, lines: ['Red'] },
+  { id: 'welcome', name: 'Welcome', shortName: 'Welcome', x: 695, y: 245, lat: 28.6718, lng: 77.2776, lines: ['Red', 'Pink'], isInterchange: true, showLabel: true },
+  { id: 'shaheed-sthal', name: 'Shaheed Sthal (Ghaziabad)', shortName: 'Shaheed Sthal', x: 875, y: 225, lat: 28.6706, lng: 77.4155, lines: ['Red'], showLabel: true },
+
+  // Pink Line Ring additions
+  { id: 'majlis-park', name: 'Majlis Park', shortName: 'Majlis Park', x: 520, y: 115, lat: 28.7244, lng: 77.1819, lines: ['Pink'] },
+  { id: 'punjabi-bagh-west', name: 'Punjabi Bagh West', shortName: 'Punjabi Bagh W', x: 345, y: 325, lat: 28.6708, lng: 77.1388, lines: ['Pink', 'Green'], isInterchange: true },
+  { id: 'dhaula-kuan', name: 'Dhaula Kuan (South Campus)', shortName: 'Dhaula Kuan', x: 415, y: 515, lat: 28.5919, lng: 77.1616, lines: ['Pink', 'Orange'], isInterchange: true, showLabel: true },
+  { id: 'lajpat-nagar', name: 'Lajpat Nagar', shortName: 'Lajpat Nagar', x: 615, y: 555, lat: 28.5698, lng: 77.2433, lines: ['Pink', 'Violet'], isInterchange: true, showLabel: true },
+  { id: 'shiv-vihar', name: 'Shiv Vihar', shortName: 'Shiv Vihar', x: 755, y: 155, lat: 28.7263, lng: 77.2886, lines: ['Pink'], showLabel: true },
+
+  // Magenta Line additions
+  { id: 'palam', name: 'Palam', shortName: 'Palam', x: 295, y: 580, lat: 28.5849, lng: 77.0849, lines: ['Magenta'] },
+  { id: 'igi-t1', name: 'Terminal 1-IGI Airport', shortName: 'IGI T1', x: 345, y: 625, lat: 28.5567, lng: 77.1185, lines: ['Magenta'], showLabel: true },
+  { id: 'munirka', name: 'Munirka / IIT Delhi', shortName: 'IIT Delhi', x: 435, y: 650, lat: 28.5576, lng: 77.1737, lines: ['Magenta'], showLabel: true },
+  { id: 'kalkaji-mandir', name: 'Kalkaji Mandir', shortName: 'Kalkaji Mandir', x: 650, y: 650, lat: 28.5495, lng: 77.2606, lines: ['Magenta', 'Violet'], isInterchange: true, showLabel: true },
+  { id: 'jamia-millia', name: 'Jamia Millia Islamia', shortName: 'Jamia Millia', x: 745, y: 625, lat: 28.5623, lng: 77.2856, lines: ['Magenta'] },
+
+  // Violet Line additions
+  { id: 'jama-masjid', name: 'Lal Quila / Jama Masjid', shortName: 'Jama Masjid', x: 580, y: 325, lat: 28.6505, lng: 77.2377, lines: ['Violet'] },
+  { id: 'jln-stadium', name: 'JLN Stadium (Sunder Nursery)', shortName: 'JLN Stadium', x: 605, y: 510, lat: 28.583, lng: 77.2335, lines: ['Violet'], showLabel: true },
+  { id: 'nehru-place', name: 'Nehru Place', shortName: 'Nehru Place', x: 632, y: 610, lat: 28.5514, lng: 77.2516, lines: ['Violet'] },
+  { id: 'badarpur-border', name: 'Badarpur Border', shortName: 'Badarpur', x: 695, y: 745, lat: 28.4932, lng: 77.303, lines: ['Violet'] },
+  { id: 'raja-nahar-singh', name: 'Raja Nahar Singh (Faridabad)', shortName: 'Faridabad', x: 735, y: 835, lat: 28.3404, lng: 77.3168, lines: ['Violet'], showLabel: true },
+
+  // Airport Express (Orange Line) additions
+  { id: 'aerocity', name: 'Delhi Aerocity', shortName: 'Aerocity', x: 310, y: 575, lat: 28.5488, lng: 77.1208, lines: ['Orange'] },
+  { id: 'igi-t3', name: 'IGI Airport T3', shortName: 'IGI Airport T3', x: 215, y: 620, lat: 28.5562, lng: 77.0866, lines: ['Orange'], showLabel: true },
+  { id: 'yashobhoomi', name: 'Yashobhoomi Dwarka Sec 25', shortName: 'Yashobhoomi', x: 58, y: 685, lat: 28.5419, lng: 77.0324, lines: ['Orange'], showLabel: true },
+
+  // Green Line additions
+  { id: 'peeragarhi', name: 'Peeragarhi', shortName: 'Peeragarhi', x: 240, y: 315, lat: 28.6798, lng: 77.0928, lines: ['Green'] },
+  { id: 'bahadurgarh', name: 'Brig. Hoshiyar Singh (Bahadurgarh)', shortName: 'Bahadurgarh', x: 95, y: 305, lat: 28.6914, lng: 76.9355, lines: ['Green'], showLabel: true },
 ];
 
 export function stationName(id: string): string {
@@ -128,29 +205,58 @@ export function stationName(id: string): string {
 }
 
 export const METRO_LINES: { name: MetroLineName; points: string }[] = [
+  // Blue Line Main Corridor (Dwarka Sec 21 to Noida Electronic City)
   {
     name: 'Blue',
-    points: '110,630 185,555 265,495 345,430 435,395 525,395 605,410 740,435',
+    points:
+      '95,650 135,605 185,555 222,525 245,508 270,490 308,460 345,430 390,410 445,395 525,395 605,405 675,420 725,465 785,525 830,575 910,560',
   },
+  // Blue Line Branch (Yamuna Bank to Vaishali)
+  {
+    name: 'Blue',
+    points: '675,420 760,365 815,355 885,340',
+  },
+  // Yellow Line (Samaypur Badli to Millennium City Centre Gurugram)
   {
     name: 'Yellow',
-    points: '510,155 520,215 535,265 530,325 525,395 525,470 520,560 515,650 490,760',
+    points:
+      '465,75 485,135 510,175 522,220 535,265 530,315 527,355 525,395 525,465 520,555 518,598 515,650 495,710 465,755 395,815 335,860',
   },
+  // Red Line (Rithala to Shaheed Sthal)
   {
     name: 'Red',
-    points: '260,215 370,245 535,265 700,260',
+    points: '215,155 290,195 355,230 410,255 475,262 535,265 695,245 875,225',
   },
+  // Pink Line Ring Corridor (Majlis Park -> Azadpur -> NSP -> Rajouri -> INA -> Lajpat -> Mayur Vihar -> Anand Vihar -> Welcome -> Shiv Vihar)
   {
     name: 'Pink',
-    points: '370,245 345,430 520,560 690,545',
+    points:
+      '520,115 485,135 355,230 345,325 345,430 415,515 520,555 615,555 725,465 815,355 760,365 695,245 755,155',
   },
+  // Magenta Line (Janakpuri West -> IGI T1 -> IIT/Munirka -> Hauz Khas -> Kalkaji -> Botanical Garden)
   {
     name: 'Magenta',
-    points: '265,495 360,620 515,650 685,670',
+    points: '270,490 295,580 345,625 435,650 515,650 650,650 745,625 830,575',
   },
+  // Violet Line (Kashmere Gate -> Mandi House -> Central Sec -> JLN Stadium -> Lajpat -> Kalkaji -> Badarpur -> Faridabad)
   {
     name: 'Violet',
-    points: '535,265 605,410 525,470 625,525 680,680',
+    points:
+      '535,265 580,325 605,405 525,465 605,510 615,555 632,610 650,650 695,745 735,835',
+  },
+  // Airport Express Orange Line (New Delhi -> Dhaula Kuan -> Aerocity -> IGI T3 -> Dwarka Sec 21 -> Yashobhoomi)
+  {
+    name: 'Orange',
+    points: '527,355 415,515 310,575 215,620 95,650 58,685',
+  },
+  // Green Line (Inderlok / Kirti Nagar -> Punjabi Bagh -> Peeragarhi -> Bahadurgarh)
+  {
+    name: 'Green',
+    points: '410,255 345,325 240,315 95,305',
+  },
+  {
+    name: 'Green',
+    points: '390,410 345,325',
   },
 ];
 
@@ -164,6 +270,8 @@ export interface Destination {
   stationId: string;
   x: number;
   y: number;
+  lat: number;
+  lng: number;
   duration: string;
   cost: [number, number];
   walkMin: number;
@@ -194,6 +302,8 @@ export const DESTINATIONS: Destination[] = [
     stationId: 'dwarka-mor',
     x: 185,
     y: 555,
+    lat: 28.6091,
+    lng: 77.037,
     duration: '2–3 hrs',
     cost: [150, 350],
     walkMin: 5,
@@ -226,6 +336,8 @@ export const DESTINATIONS: Destination[] = [
     stationId: 'kashmere-gate',
     x: 535,
     y: 265,
+    lat: 28.6654,
+    lng: 77.232,
     duration: '2–3 hrs',
     cost: [150, 350],
     walkMin: 6,
@@ -258,6 +370,8 @@ export const DESTINATIONS: Destination[] = [
     stationId: 'rajiv-chowk',
     x: 525,
     y: 395,
+    lat: 28.6315,
+    lng: 77.2167,
     duration: '2–4 hrs',
     cost: [250, 550],
     walkMin: 2,
@@ -288,8 +402,10 @@ export const DESTINATIONS: Destination[] = [
     description:
       'Restored 16th-century heritage park with sunken gardens, lakes, and open picnic lawns popular with college groups for afternoon outings.',
     stationId: 'jln-stadium',
-    x: 625,
-    y: 525,
+    x: 605,
+    y: 510,
+    lat: 28.5955,
+    lng: 77.2453,
     duration: '3–4 hrs',
     cost: [150, 450],
     walkMin: 10,
@@ -321,7 +437,9 @@ export const DESTINATIONS: Destination[] = [
       'Open-air food and craft plaza where everyone can order momos, thukpa, litti chokha, or dosas from state stalls under one roof.',
     stationId: 'ina',
     x: 520,
-    y: 560,
+    y: 555,
+    lat: 28.5733,
+    lng: 77.2075,
     duration: '2–3 hrs',
     cost: [200, 500],
     walkMin: 2,
@@ -352,8 +470,10 @@ export const DESTINATIONS: Destination[] = [
     description:
       'High-energy plaza with dozens of student-friendly food kiosks, shakes, and outdoor seating connected by Red and Pink Lines.',
     stationId: 'netaji-subhash-place',
-    x: 370,
-    y: 245,
+    x: 355,
+    y: 230,
+    lat: 28.696,
+    lng: 77.1524,
     duration: '2–3 hrs',
     cost: [150, 400],
     walkMin: 3,

@@ -836,24 +836,20 @@ function TravityShell() {
       {quotaExceeded && (
         <div
           role="alert"
-          className="fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-3 border-b border-warning bg-warning/15 px-4 py-2 text-xs text-foreground"
+          className="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm lg:col-span-2"
         >
           <span>
-            <strong>Google Maps Demo Key quota reached.</strong> Switch to your own Google Maps API
-            key in AI Studio Settings or see the{' '}
+            Google Maps Platform quota reached. If you are the app owner, visit{' '}
             <a
               href="https://developers.google.com/maps/ai/ai-studio?utm_campaign=gmp_mcp_codeassist_v1_aistudio#quota_exceeded_errors"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold underline"
+              className="underline font-semibold text-amber-950 hover:text-amber-800"
             >
-              troubleshooting guide
-            </a>
-            .
+              maps developer site
+            </a>{' '}
+            for instructions to update your account.
           </span>
-          <button type="button" onClick={() => setQuotaExceeded(false)}>
-            ×
-          </button>
         </div>
       )}
 

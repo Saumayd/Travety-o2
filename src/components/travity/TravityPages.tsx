@@ -67,7 +67,12 @@ import {
 } from './TravityBits';
 import { DmrcMetroMap } from '../DmrcMetroMap';
 import { LobbyMapWidget } from '../LobbyMapWidget';
-import { NCR_HUB_RECOMMENDATIONS, type AppMode, type SquadMember } from '../../data/ncrMetroData';
+import {
+  NCR_HUB_RECOMMENDATIONS,
+  type AppMode,
+  type HubRecommendation,
+  type SquadMember,
+} from '../../data/ncrMetroData';
 import type { GroundingSource } from '../GeminiChatDrawer';
 
 export type TravityPageId =
@@ -1871,11 +1876,18 @@ export function RouteMapPage({
   );
 
   const [selectedHubId, setSelectedHubId] = useState<string>(
-    chosenDest.slug === 'igdtuw-kashmere-gate' ? 'igdtuw-kashmere' : 'nsut-dwarka'
+    chosenDest.slug === 'igdtuw-kashmere-gate'
+      ? 'igdtuw-kashmere'
+      : chosenDest.slug === 'nsut-dwarka-hub'
+        ? 'nsut-dwarka'
+        : chosenDest.slug
   );
-  const rankedHubs = useMemo(
-    () =>
-      NCR_HUB_RECOMMENDATIONS.map((h) => ({
+
+  const rankedHubs = useMemo<
+    (HubRecommendation & { matchScore: number; modeReason: string })[]
+  >(
+    () => [
+      ...NCR_HUB_RECOMMENDATIONS.map((h) => ({
         ...h,
         matchScore: h.id === 'nsut-dwarka' ? 96 : 94,
         modeReason:
@@ -1883,8 +1895,48 @@ export function RouteMapPage({
             ? 'Verified DMRC security & Pink Saheli corridor'
             : 'Student hub with cafes & direct metro interchange',
       })),
+      {
+        id: 'connaught-place',
+        name: 'Connaught Place (Rajiv Chowk Interchange)',
+        shortName: 'Connaught Place (CP)',
+        area: 'Central Delhi · Blue & Yellow Line',
+        metroLine: 'Blue & Yellow Line Interchange',
+        avgCost: 350,
+        centralDistanceKm: 0.5,
+        pinkSaheliBooths: 4,
+        lightingIndex: 98,
+        crimeSafetyScore: 97,
+        funVibeScore: 96,
+        highlights: ['Direct 0-transfer midpoint', 'Inner Circle cafes'],
+        mapCoords: { x: 525, y: 395 },
+        lat: 28.6315,
+        lng: 77.2167,
+        matchScore: 98,
+        modeReason: 'Exact Blue + Yellow Line midpoint for NSUT & IGDTUW',
+      },
+      {
+        id: 'dilli-haat-ina',
+        name: 'Dilli Haat INA (Yellow & Pink Line)',
+        shortName: 'Dilli Haat INA',
+        area: 'INA Market · Yellow & Pink Line',
+        metroLine: 'Yellow & Pink Line Interchange',
+        avgCost: 320,
+        centralDistanceKm: 6.2,
+        pinkSaheliBooths: 3,
+        lightingIndex: 95,
+        crimeSafetyScore: 95,
+        funVibeScore: 94,
+        highlights: ['State food stalls', 'Gate 5 direct entry'],
+        mapCoords: { x: 520, y: 555 },
+        lat: 28.5733,
+        lng: 77.2075,
+        matchScore: 91,
+        modeReason: 'Direct Yellow & Pink Line interchange plaza',
+      },
+    ],
     [mode]
   );
+
   const activeHub = useMemo(
     () => rankedHubs.find((h) => h.id === selectedHubId) || rankedHubs[0],
     [rankedHubs, selectedHubId]
@@ -1894,7 +1946,7 @@ export function RouteMapPage({
     <div>
       <PageHeader
         title={t('map.title')}
-        sub="Compare every friend's metro path across Delhi NCR — switch between the Stylised Squad Map, Interactive DMRC Network, and Live Google Maps."
+        sub="Compare every friend's metro path across the complete Delhi NCR network — switch between the Stylised Squad Map, Full 8-Line DMRC Network, and Live Google Maps."
         actions={
           <div className="grid w-full grid-cols-3 rounded-xl border border-border bg-card p-1 sm:inline-flex sm:w-auto">
             <button
@@ -1919,7 +1971,7 @@ export function RouteMapPage({
                   : 'text-muted-foreground hover:text-foreground')
               }
             >
-              DMRC Map
+              Full DMRC Map
             </button>
             <button
               type="button"
@@ -1931,7 +1983,7 @@ export function RouteMapPage({
                   : 'text-muted-foreground hover:text-foreground')
               }
             >
-              Google Maps
+              Live Google Maps
             </button>
           </div>
         }
@@ -1942,7 +1994,7 @@ export function RouteMapPage({
           <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-lift">
             <MetroMap
               className="p-2 sm:p-4"
-              destinations={[chosenDest]}
+              destinations={DESTINATIONS}
               selectedDest={chosenDest.slug}
               routes={routes}
               highlightStationId={
@@ -1987,7 +2039,7 @@ export function RouteMapPage({
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             <section className="rounded-2xl border border-border bg-card p-5 shadow-soft">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-bold">{t('map.legend')}</h2>
+                <h2 className="text-base font-bold">{t('map.legend')} (All 8 NCR Lines)</h2>
                 <button
                   type="button"
                   onClick={() => setIntro(true)}
@@ -1996,15 +2048,15 @@ export function RouteMapPage({
                   Replay Globe Intro
                 </button>
               </div>
-              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {Object.entries(LINE_COLORS).map(([line, color]) => (
-                  <li key={line} className="flex items-center gap-2 text-sm">
+                  <li key={line} className="flex items-center gap-2 text-xs sm:text-sm">
                     <span
-                      className="h-2.5 w-6 rounded-full"
+                      className="h-2.5 w-5 shrink-0 rounded-full"
                       style={{ backgroundColor: color }}
                       aria-hidden
                     />
-                    {line} line
+                    <span className="truncate">{line} line</span>
                   </li>
                 ))}
               </ul>
@@ -2057,15 +2109,44 @@ export function RouteMapPage({
       )}
 
       {mapTab === 'dmrc' && (
-        <DmrcMetroMap
-          mode={mode}
-          activeHub={activeHub}
-          onSelectHub={setSelectedHubId}
-          userName={userName}
-          userLocation={location}
-          userCurfew="21:30"
-          members={squadMembers}
-        />
+        <div className="space-y-4">
+          {/* Central Hub Quick Switcher Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-card px-4 py-3 shadow-soft">
+            <span className="text-xs font-semibold text-muted-foreground">
+              Select Outing Central Hub:
+            </span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {rankedHubs.map((hub) => {
+                const isSelected = selectedHubId === hub.id || activeHub.id === hub.id;
+                return (
+                  <button
+                    key={hub.id}
+                    type="button"
+                    onClick={() => setSelectedHubId(hub.id)}
+                    className={
+                      'rounded-xl border px-3 py-1.5 text-xs font-semibold transition-colors ' +
+                      (isSelected
+                        ? 'border-primary bg-primary text-primary-foreground shadow-xs'
+                        : 'border-border bg-background text-foreground hover:bg-accent')
+                    }
+                  >
+                    {hub.shortName} · ₹{hub.avgCost}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <DmrcMetroMap
+            mode={mode}
+            activeHub={activeHub}
+            onSelectHub={setSelectedHubId}
+            userName={userName}
+            userLocation={location}
+            userCurfew="21:30"
+            members={squadMembers}
+          />
+        </div>
       )}
 
       {mapTab === 'google' && (
@@ -2079,6 +2160,8 @@ export function RouteMapPage({
           userLocation={location}
           userCurfew="21:30"
           members={squadMembers}
+          defaultVisualMode="google"
+          hideModeSwitcher={true}
         />
       )}
     </div>

@@ -281,70 +281,129 @@ export function MetroMap({
   return (
     <div className={className}>
       <svg
-        viewBox="0 0 850 780"
+        viewBox="0 0 1000 920"
         className="h-auto w-full"
         role="img"
-        aria-label="Stylised metro map of Delhi NCR"
+        aria-label="Complete stylised metro map of Delhi NCR"
       >
-        <rect x="0" y="0" width="850" height="780" rx="24" fill="var(--color-card)" />
+        <defs>
+          <pattern id="travity-metro-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path
+              d="M 40 0 L 0 0 0 40"
+              fill="none"
+              stroke="var(--color-border)"
+              strokeWidth="0.6"
+              opacity="0.45"
+            />
+          </pattern>
+        </defs>
 
-        {/* metro lines */}
-        {METRO_LINES.map((line) => (
+        <rect x="0" y="0" width="1000" height="920" rx="24" fill="var(--color-card)" />
+        <rect x="0" y="0" width="1000" height="920" rx="24" fill="url(#travity-metro-grid)" />
+
+        {/* Yamuna River Geographical Ribbon */}
+        <path
+          d="M 555 20 C 570 140, 560 220, 575 300 C 590 380, 640 420, 665 495 C 690 575, 720 690, 775 900"
+          fill="none"
+          stroke="#38BDF8"
+          strokeWidth="22"
+          strokeLinecap="round"
+          opacity="0.12"
+        />
+
+        {/* Subtle NCR Regional Watermark Labels */}
+        <g opacity="0.38" fill="var(--color-muted-foreground)" fontSize="11" fontWeight="700" letterSpacing="2">
+          <text x="200" y="110">ROHINI · NORTH-WEST</text>
+          <text x="530" y="65">NORTH CAMPUS · BADLI</text>
+          <text x="790" y="195">EAST DELHI · GHAZIABAD</text>
+          <text x="90" y="520">DWARKA · NSUT WEST</text>
+          <text x="480" y="438">CONNAUGHT PLACE</text>
+          <text x="795" y="625">NOIDA · BOTANICAL</text>
+          <text x="210" y="835">GURUGRAM · MILLENNIUM CITY</text>
+          <text x="750" y="865">FARIDABAD</text>
+        </g>
+
+        {/* All 8 DMRC Metro Lines */}
+        {METRO_LINES.map((line, idx) => (
           <polyline
-            key={line.name}
+            key={`${line.name}-${idx}`}
             points={line.points}
             fill="none"
             stroke={LINE_COLORS[line.name]}
-            strokeWidth={6}
+            strokeWidth={line.name === 'Orange' ? 4.5 : 6}
+            strokeDasharray={line.name === 'Orange' ? '10 5' : undefined}
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={0.85}
+            opacity={0.86}
           />
         ))}
 
-        {/* stations */}
+        {/* Stations + Interchange Rings + Key Station Labels */}
         {STATIONS.map((s) => {
           const highlight = s.id === highlightStationId;
+          const isInterchange = Boolean(s.isInterchange || s.lines.length > 1);
           return (
             <g key={s.id}>
               {highlight && (
                 <circle
                   cx={s.x}
                   cy={s.y}
-                  r={14}
+                  r={15}
                   fill="none"
                   stroke="var(--color-primary)"
                   strokeWidth={3}
                   className="dot-pulse"
                 />
               )}
+              {isInterchange && (
+                <circle
+                  cx={s.x}
+                  cy={s.y}
+                  r={7.5}
+                  fill="var(--color-card)"
+                  stroke="var(--color-foreground)"
+                  strokeWidth={1.8}
+                />
+              )}
               <circle
                 cx={s.x}
                 cy={s.y}
-                r={5}
+                r={isInterchange ? 4.5 : 4}
                 fill="var(--color-background)"
                 stroke={LINE_COLORS[s.lines[0] ?? 'Blue']}
                 strokeWidth={2.5}
               />
+              {s.showLabel && (
+                <text
+                  x={s.x}
+                  y={s.y - 11}
+                  textAnchor="middle"
+                  fontSize={9.5}
+                  fontWeight={600}
+                  fill="var(--color-muted-foreground)"
+                >
+                  {s.shortName || s.name}
+                </text>
+              )}
             </g>
           );
         })}
 
-        {/* safety markers */}
+        {/* Safety markers */}
         {markers.map((m) => (
           <circle
             key={m.id}
             cx={m.x}
             cy={m.y}
-            r={7}
+            r={7.5}
             fill="var(--color-brand-pink)"
-            opacity={0.85}
+            opacity={0.9}
             stroke="var(--color-card)"
-            strokeWidth={1.5}
+            strokeWidth={1.8}
           />
         ))}
 
-        {/* destination markers */}
+        {/* Destination markers */}
         {destinations.map((d) => {
           const selected = d.slug === selectedDest;
           return (
@@ -358,12 +417,12 @@ export function MetroMap({
                 stroke="var(--color-card)"
                 strokeWidth={selected ? 3 : 2}
               />
-              <circle cx={d.x} cy={d.y} r={4} fill="var(--color-primary-foreground)" />
+              <circle cx={d.x} cy={d.y} r={4.5} fill="var(--color-primary-foreground)" />
             </g>
           );
         })}
 
-        {/* member routes */}
+        {/* Member routes */}
         {routes.map((r) => {
           const st = STATIONS.find((s) => s.id === (r.stationId ?? r.member.stationId));
           if (!st) return null;
@@ -371,7 +430,7 @@ export function MetroMap({
           return (
             <g
               key={`${r.member.id}-${r.dest.slug}`}
-              opacity={r.emphasized === false ? 0.45 : 1}
+              opacity={r.emphasized === false ? 0.35 : 1}
             >
               <path
                 d={d}
@@ -387,15 +446,15 @@ export function MetroMap({
                   x={-r.member.name.length * 3.4 - 8}
                   y={-9}
                   width={r.member.name.length * 6.8 + 16}
-                  height={16}
-                  rx={8}
+                  height={17}
+                  rx={8.5}
                   fill={r.member.color}
                   stroke="var(--color-card)"
-                  strokeWidth={1.4}
+                  strokeWidth={1.5}
                 />
                 <text
                   x={0}
-                  y={4}
+                  y={3.5}
                   textAnchor="middle"
                   fontSize={10.5}
                   fontWeight={700}
@@ -408,19 +467,31 @@ export function MetroMap({
           );
         })}
 
-        {/* destination name labels */}
+        {/* Destination name callout pills */}
         {destinations.map((d) => (
-          <text
-            key={`label-${d.slug}`}
-            x={d.x}
-            y={d.y + 26}
-            textAnchor="middle"
-            fontSize={11.5}
-            fontWeight={700}
-            fill="var(--color-foreground)"
-          >
-            {d.name}
-          </text>
+          <g key={`label-${d.slug}`} transform={`translate(${d.x}, ${d.y + 26})`}>
+            <rect
+              x={-Math.min(115, d.name.length * 3.4 + 10)}
+              y={-11}
+              width={Math.min(230, d.name.length * 6.8 + 20)}
+              height={18}
+              rx={6}
+              fill="var(--color-card)"
+              opacity={0.92}
+              stroke="var(--color-border)"
+              strokeWidth={1}
+            />
+            <text
+              x={0}
+              y={2}
+              textAnchor="middle"
+              fontSize={10.5}
+              fontWeight={700}
+              fill="var(--color-foreground)"
+            >
+              {d.name}
+            </text>
+          </g>
         ))}
       </svg>
       {children}
